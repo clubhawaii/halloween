@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Halloween Card Photo Booth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@700;800;900&family=Noto+Sans+KR:wght@500;700;900&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div class="sky" aria-hidden="true"><i>✦</i><i>✦</i><i>✦</i><i>✦</i><i>✦</i><i>✦</i><i class="bat"></i><i class="bat"></i></div>
+
+  <!-- ===== 상단 바 (관리자 메뉴) ===== -->
+  <header class="topbar">
+    <div class="brand"><span class="dot">☾</span>Halloween <span class="thin">Card Booth</span></div>
+    <div class="topbar-right">
+      <span class="academy-chip" id="topAcademy" hidden></span>
+      <button class="icon-btn" id="btnPrintMenu" type="button" title="카드 인쇄하기" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg><span>카드 인쇄하기</span>
+      </button>
+      <button class="icon-btn" id="btnSettings" type="button" title="학원명 변경" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>학원명 변경</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- 1. 학원 최초 설정 -->
+    <section class="screen" id="screen-setup" data-screen="setup">
+      <div class="panel narrow">
+        <p class="hud">BOOTH SETUP</p>
+        <h1 class="display">HALLOWEEN CARD<br>PHOTO BOOTH</h1>
+        <p class="lead">우리 학원 포토부스를 시작해볼까요?</p>
+        <form id="setupForm" class="form" novalidate>
+          <label class="field">
+            <span class="field-label">학원명</span>
+            <input id="academyInput" type="text" autocomplete="off" required>
+          </label>
+          <p class="error" id="setupError" hidden>학원명을 입력해주세요.</p>
+          <button class="btn primary big" type="submit">포토부스 시작하기</button>
+          <button class="btn ghost" type="button" id="setupCancel" hidden>취소</button>
+        </form>
+        <div class="notice warn" id="fsWarnSetup" hidden></div>
+        <p class="tiny tip" data-text="browserTip"></p>
+      </div>
+    </section>
+
+    <!-- 2. 학생 시작 화면 -->
+    <section class="screen" id="screen-start" data-screen="start">
+      <div class="start-wrap">
+        <p class="hud blink" data-text="eventLabel"></p>
+        <h1 class="start-title">오늘 나의<br><span class="glitch" data-glitch="HALLOWEEN TYPE">HALLOWEEN TYPE</span>은?</h1>
+        <p class="lead">사진 한 장으로 만드는<br>우리 학원 한정판 Halloween Card</p>
+        <div class="card-fan" id="cardFan" aria-hidden="true"></div>
+        <button class="btn primary huge" id="btnStart" type="button">START</button>
+        <p class="academy-foot" id="startAcademy"></p>
+        <div class="notice warn" id="fsWarnStart" hidden></div>
+      </div>
+    </section>
+
+    <!-- 3. 이름/닉네임 입력 -->
+    <section class="screen" id="screen-info" data-screen="info">
+      <div class="panel narrow">
+        <p class="hud">PLAYER ENTRY</p>
+        <h2 class="title">플레이어 정보를 입력해주세요</h2>
+        <form id="infoForm" class="form" novalidate>
+          <label class="field">
+            <span class="field-label">이름 <em>카드에는 표시되지 않아요</em></span>
+            <input id="nameInput" type="text" autocomplete="off" placeholder="예: 김민지" maxlength="20" required>
+          </label>
+          <label class="field">
+            <span class="field-label">카드 닉네임 <em id="nickCount">0 / 14</em></span>
+            <input id="nickInput" type="text" autocomplete="off" placeholder="예: MINJI" required>
+          </label>
+          <p class="error" id="infoError" hidden>이름과 닉네임을 모두 입력해주세요.</p>
+          <div class="row">
+            <button class="btn ghost" type="button" data-action="home">처음으로</button>
+            <button class="btn primary" type="submit">다음</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 4~7. 질문 (문항 수는 config.js) -->
+    <section class="screen" id="screen-quiz" data-screen="quiz">
+      <div class="panel narrow">
+        <div class="quiz-head">
+          <p class="hud">QUEST <span id="quizStep">1 / 4</span></p>
+          <div class="progress"><i id="quizBar"></i></div>
+        </div>
+        <h2 class="question" id="quizQuestion"></h2>
+        <div class="answers" id="quizAnswers"></div>
+      </div>
+    </section>
+
+    <!-- 9. 타입 결과 -->
+    <section class="screen" id="screen-type" data-screen="type">
+      <div class="panel result-panel">
+        <p class="hud">YOUR HALLOWEEN TYPE</p>
+        <h1 class="type-name" id="typeName">TYPE 01</h1>
+        <p class="lead" id="typeTagline" hidden></p>
+        <div class="type-preview"><img id="typePreview" alt="카드 시안 미리보기"></div>
+        <button class="btn primary big" id="btnMakeCard" type="button">내 카드 만들기</button>
+      </div>
+    </section>
+
+    <!-- 10. 사진 촬영 / 업로드 -->
+    <section class="screen" id="screen-photo" data-screen="photo">
+      <div class="panel">
+        <p class="hud">PHOTO INPUT</p>
+        <h2 class="title">사진을 찍거나 가져와주세요</h2>
+
+        <div class="photo-choice" id="photoChoice">
+          <button class="choice" id="btnCamera" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="4"/></svg>
+            <b>사진 찍기</b><span>카메라로 바로 촬영</span>
+          </button>
+          <button class="choice" id="btnUpload" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg>
+            <b>사진 가져오기</b><span>갤러리 / 폴더에서 선택</span>
+          </button>
+        </div>
+
+        <div class="camera" id="cameraBox" hidden>
+          <div class="camera-view">
+            <video id="cameraVideo" playsinline autoplay muted></video>
+            <div class="camera-guide"><span></span></div>
+          </div>
+          <div class="row center">
+            <button class="btn ghost" id="btnCameraCancel" type="button">취소</button>
+            <button class="btn primary big shutter" id="btnShutter" type="button">촬영</button>
+          </div>
+        </div>
+
+        <p class="error" id="photoError" hidden></p>
+        <input type="file" id="fileUpload" accept="image/*" hidden>
+        <input type="file" id="fileCapture" accept="image/*" capture="user" hidden>
+        <div class="row"><button class="btn ghost" type="button" data-action="home">처음으로</button></div>
+      </div>
+    </section>
+
+    <!-- 11. 사진 위치 조정 -->
+    <section class="screen" id="screen-adjust" data-screen="adjust">
+      <div class="panel adjust-panel">
+        <p class="hud">ADJUST</p>
+        <h2 class="title">얼굴이 카드 가운데 오도록<br>사진 위치를 맞춰주세요.</h2>
+        <div class="editor-wrap">
+          <canvas id="editorCanvas" class="card-canvas" aria-label="사진 위치 조정 영역"></canvas>
+          <p class="hint">드래그로 이동 · 휠/두 손가락으로 확대</p>
+        </div>
+        <div class="zoom-row">
+          <button class="btn icon" id="btnZoomOut" type="button" aria-label="축소">−</button>
+          <input type="range" id="zoomRange" min="0.5" max="4" step="0.01" value="1" aria-label="확대/축소">
+          <button class="btn icon" id="btnZoomIn" type="button" aria-label="확대">+</button>
+          <button class="btn ghost small" id="btnReset" type="button">맞춤</button>
+        </div>
+        <div class="row wrap">
+          <button class="btn ghost" id="btnRetake" type="button">다시 촬영</button>
+          <button class="btn ghost" id="btnOther" type="button">다른 사진 선택</button>
+          <button class="btn primary big" id="btnConfirm" type="button">카드 완성하기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. 카드 결과 -->
+    <section class="screen" id="screen-card" data-screen="card">
+      <div class="panel result-panel">
+        <p class="hud">COMPLETE</p>
+        <h1 class="display small">YOUR HALLOWEEN CARD<br>IS READY</h1>
+        <div class="final-wrap"><img id="finalImage" alt="완성된 할로윈 카드"></div>
+        <p class="save-status" id="saveStatus" hidden></p>
+        <div class="row wrap center">
+          <button class="btn primary big" id="btnSave" type="button">이미지 저장</button>
+          <button class="btn ghost" id="btnRemake" type="button">다시 만들기</button>
+          <button class="btn accent big" id="btnNext" type="button">NEXT PLAYER ▸</button>
+        </div>
+        <p class="tiny folder-info" id="folderInfo" hidden></p>
+      </div>
+    </section>
+
+    <!-- 13. 카드 인쇄 파일 선택 -->
+    <section class="screen" id="screen-print-select" data-screen="print-select">
+      <div class="panel">
+        <p class="hud">PRINT · SELECT</p>
+        <h2 class="title">인쇄할 카드를 선택해주세요</h2>
+        <p class="lead small">저장 폴더에서 PNG·JPG 카드 이미지를 <b>최대 8장</b>까지 선택할 수 있어요.</p>
+        <div class="notice" id="printModeNotice" hidden></div>
+        <div class="row">
+          <button class="btn primary" id="btnPickPrint" type="button">카드 이미지 선택</button>
+        </div>
+        <input type="file" id="printFileInput" multiple accept="image/png,image/jpeg,.png,.jpg,.jpeg" hidden>
+        <p class="error" id="printError" hidden></p>
+        <p class="count-line" id="printCount" hidden></p>
+        <div class="thumb-grid" id="printThumbs"></div>
+        <div class="row">
+          <button class="btn ghost" id="btnPrintBack" type="button">돌아가기</button>
+          <button class="btn primary big" id="btnBuildLayout" type="button" disabled>인쇄 레이아웃 만들기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. A4 인쇄 미리보기 -->
+    <section class="screen" id="screen-print-preview" data-screen="print-preview">
+      <div class="panel preview-panel">
+        <p class="hud">A4 PREVIEW · 2 × 4</p>
+        <div class="row">
+          <button class="btn ghost" id="btnPreviewBack" type="button">다시 선택</button>
+          <button class="btn primary big" id="btnDoPrint" type="button">전체 카드 인쇄</button>
+        </div>
+        <p class="tiny">인쇄 창에서 프린터를 고르거나 ‘PDF로 저장’을 선택하세요. 용지: A4 세로 · 배율: 기본(100%) · 여백: 없음 권장</p>
+        <div class="a4-scroller"><div id="a4Preview"></div></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 토스트 / 모달 -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="modal" id="modal" hidden>
+    <div class="modal-box">
+      <p class="hud" id="modalHud">NOTICE</p>
+      <p id="modalText"></p>
+      <div class="row center" id="modalButtons"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 인쇄 전용 영역: 인쇄 시 이것만 출력됩니다 -->
+<div id="print-area" aria-hidden="true"></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
