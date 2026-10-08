@@ -1059,7 +1059,7 @@
     if (!state.player.savedName) {
       const ok = await modal(
         "아직 카드를 저장하지 않았어요. 저장하지 않고 다음 플레이어로 넘어갈까요?",
-        [{ label: "돌아가기", kind: "ghost", value: false }, { label: "넘어가기", kind: "accent", value: true }],
+        [{ label: "취소", kind: "ghost", value: false }, { label: "넘어가기", kind: "accent", value: true }],
         "NEXT PLAYER"
       );
       if (!ok) return;
@@ -1070,7 +1070,7 @@
 
   $$('[data-action="home"]').forEach((b) =>
     b.addEventListener("click", async () => {
-      const ok = await modal("처음 화면으로 돌아갈까요? 입력한 내용은 지워져요.",
+      const ok = await modal("처음으로 돌아갈까요?",
         [{ label: "취소", kind: "ghost", value: false }, { label: "처음으로", kind: "primary", value: true }]);
       if (!ok) return;
       resetPlayer();
